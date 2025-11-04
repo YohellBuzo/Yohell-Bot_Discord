@@ -16,15 +16,20 @@ const sendMessage = async (embed: Embed) => {
 export const messageUpdateListener = client.on(
   "messageUpdate",
   (oldMessage, newMessage) => {
-    if (!newMessage.author?.bot || newMessage.author.username !== "Mudae") return;
+    if (!newMessage.author?.bot || newMessage.author.username !== "Mudae")
+      return;
 
     const newEmbed = newMessage.embeds[0];
     const oldEmbed = oldMessage.embeds[0];
     if (!newEmbed || !oldEmbed) return;
 
     const data = newEmbed.data.footer?.text?.split(" ") ?? [];
-    
     if (data.length != 3) return;
+
+    const kakeraReaction = newMessage.reactions.cache.find((reaction) =>
+      reaction.emoji.name?.toLocaleLowerCase().includes("kakera")
+    );
+    if (kakeraReaction) return;
 
     sendMessage(newEmbed);
 
