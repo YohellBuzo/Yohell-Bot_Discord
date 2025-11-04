@@ -1,9 +1,8 @@
 import dotenv from "dotenv";
 import { client } from "./client";
-import { messageCreateListener, messageUpdateListener } from "./events/onMessageUpdate";
+import { messageUpdateListener } from "./events/onMessageUpdate";
 
 messageUpdateListener;
-messageCreateListener;
 
 dotenv.config();
 
