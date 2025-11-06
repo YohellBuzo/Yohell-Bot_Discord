@@ -31,21 +31,10 @@ export const messageUpdateListener = client.on(
     );
     if (kakeraReaction) return;
 
-    sendMessage(newEmbed);
+    // sendMessage(newEmbed);
 
     // console.log(
     //   `Descripción: ${newEmbed.description}, Autor: ${newEmbed.author?.name}, Footer: ${newEmbed.data.footer?.text}\n Viejo: \n ${oldEmbed.data.footer?.text}`
     // );
   }
 );
-
-// export const messageCreateListener = client.on("messageCreate", (message) => {
-//   if (!message.author?.bot || message.author.username !== "Mudae") return;
-
-//   const embed = message.embeds[0];
-//   if (!embed) return;
-
-//   console.log(
-//     `Descripción: ${embed.description}, Autor: ${embed.author?.name}, Footer: ${embed.data.footer?.text}`
-//   );
-// });

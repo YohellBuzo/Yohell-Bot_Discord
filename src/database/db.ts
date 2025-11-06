@@ -1,15 +1,21 @@
-import Database from 'better-sqlite3';
+import { Pool } from "pg";
+import dotenv from "dotenv";
 
-const db = new Database('claim_logs.db');
+const nodeEnv = process.env.NODE_ENV || "local";
 
-db.prepare(`
-  CREATE TABLE IF NOT EXISTS claims (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    character TEXT,
-    userId TEXT,
-    date TEXT,
-    imageURL TEXT
-  )
-`).run();
+dotenv.config({
+  path: nodeEnv === "production" ? ".env.production" : ".env.local",
+});
 
-export default db;
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL no definida");
+}
+
+export const db = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: nodeEnv === "production" ? { rejectUnauthorized: false } : false,
+});
+
+
+
+console.log("✅ Conexión a base de datos lista.");
