@@ -63,7 +63,7 @@ const sendMessage = async (message: any) => {
     console.error("❌ Error al enviar el mensaje:", error);
     try {
       await message.author.send(
-        "Ocurrió un error al intentar enviar el mensaje 😔"
+        `Ocurrió un error al intentar enviar el mensaje 😔 ${error}`
       );
     } catch {
       console.error("No se pudo enviar mensaje privado al usuario.");
