@@ -38,9 +38,10 @@ export class ValidationService {
   }
 
   public static isCommand(message: Message, command: string) {
-    return (
-      message.content.trim().toLocaleLowerCase() === command.toLocaleLowerCase()
-    );
+    return message.content
+      .trim()
+      .toLocaleLowerCase()
+      .startsWith(command.toLocaleLowerCase());
   }
 
   public static hasValidEmbed(embed: EmbedBuilder) {

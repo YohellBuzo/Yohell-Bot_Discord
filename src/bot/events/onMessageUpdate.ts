@@ -32,9 +32,5 @@ export const messageUpdateListener = client.on(
     if (kakeraReaction) return;
 
     sendMessage(newEmbed);
-
-    // console.log(
-    //   `Descripción: ${newEmbed.description}, Autor: ${newEmbed.author?.name}, Footer: ${newEmbed.data.footer?.text}\n Viejo: \n ${oldEmbed.data.footer?.text}`
-    // );
   }
 );
