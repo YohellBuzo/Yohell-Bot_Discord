@@ -23,16 +23,15 @@ export async function insertWisdom(
   return Wisdom.createFromObject((await result).rows[0]);
 }
 
-export async function getLastWisdom(): Promise<Wisdom> {
-  const query = `SELECT title FROM wisdom ORDER BY id DESC LIMIT 1`;
+export async function getWisdomByTitle(title: string): Promise<Wisdom> {
+  const query = `SELECT id, title, paragraph, userId, created_at FROM wisdom WHERE title = $1`;
 
-  const result = db.query(query);
+  const result = db.query(query, [title]);
   return Wisdom.createFromObject((await result).rows[0]);
 }
 
-export async function test(): Promise<Wisdom> {
-  const query = `ALTER TABLE wisdom
-DROP COLUMN code;`;
+export async function getLastWisdom(): Promise<Wisdom> {
+  const query = `SELECT title FROM wisdom ORDER BY id DESC LIMIT 1`;
 
   const result = db.query(query);
   return Wisdom.createFromObject((await result).rows[0]);

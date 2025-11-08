@@ -3,7 +3,6 @@ export class Wisdom {
   public userid: string;
   public title: string;
   public paragraph: string;
-  public code: string;
   public createdAt: Date;
 
   constructor({
@@ -11,7 +10,6 @@ export class Wisdom {
     userid = "",
     title = "",
     paragraph = "",
-    code = " ",
     createdAt = new Date(),
   }: {
     id?: string;
@@ -25,7 +23,6 @@ export class Wisdom {
     this.userid = userid;
     this.title = title;
     this.paragraph = paragraph;
-    this.code = code;
     this.createdAt = createdAt;
   }
 
@@ -35,8 +32,7 @@ export class Wisdom {
       userid: object.userid,
       title: object.title,
       paragraph: object.paragraph,
-      code: object.code,
-      createdAt: object.createdAt,
+      createdAt: object.created_at,
     });
   }
 

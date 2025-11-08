@@ -3,6 +3,7 @@ import { client } from "../client";
 import {
   getAllWisdoms,
   getLastWisdom,
+  getWisdomByTitle,
   insertWisdom,
 } from "../../services/wisdom_service";
 import { ValidationService } from "../../utils/validation_service";
@@ -63,6 +64,44 @@ const sendRandomWisdom = async (message: any) => {
   }
 };
 
+const sendWisdom = async (message: any, title: string) => {
+  if (message.author.bot) return;
+
+  if (title.length < 2) {
+    return message.reply(
+      "Leer es lava, el formato es.\n!manuel #(número de la sabiduría) los paréntesis están de adorno."
+    );
+  }
+
+  try {
+    const searchTitle = `Sabiduría ${title}`;
+    const result = await getWisdomByTitle(searchTitle);
+
+    const user = await client.users.fetch(result.userid);
+
+    const embed = new EmbedBuilder();
+    embed.setTitle(result.title);
+    embed.setDescription(result.paragraph);
+    embed.setColor("#ec53a0");
+    embed.setImage(getRandomImage());
+    embed.setThumbnail(user.displayAvatarURL());
+    embed.setFooter({
+      text: `Sabiduría de ${user.username}`,
+    });
+
+    if (!ValidationService.hasValidEmbed(embed)) {
+      return message.reply("No se pudo crear el mensaje correctamente.");
+    }
+
+    await message.channel.send({
+      embeds: [embed],
+    });
+  } catch (error) {
+    console.error("❌ Error al guardar sabiduría:", error);
+    await message.reply("Valió berenjena la busqueda.");
+  }
+};
+
 const addWisdom = async (message: any, paragraph: string) => {
   if (message.author.bot) return;
 
@@ -77,6 +116,7 @@ const addWisdom = async (message: any, paragraph: string) => {
       'Leer es lava, el formarto es.\n`!manuel add "Parrafo"` las comillas no están de adorno.'
     );
   }
+
   if (paragraph.length > 500)
     return message.reply("Es párrafo no una biblia (máx 500) caracteres.");
 
@@ -148,8 +188,8 @@ export const onManuelCommand = client.on("messageCreate", async (message) => {
   )
     return;
 
-  const text = message.content.trim();
-  const commandParts = text.match(/"[^"]+"|\S+/g) || [];
+  const command = message.content.trim();
+  const commandParts = command.split(" ");
 
   //Basic command no arguments "!manuel"
   if (commandParts.length === 1) {
@@ -159,7 +199,14 @@ export const onManuelCommand = client.on("messageCreate", async (message) => {
 
   //Add command 2 arguments [add, "parrafo"]
   if (commandParts[1] === "add") {
-    await addWisdom(message, commandParts[2] ?? "");
+    const commandPartsadd = command.match(/"[^"]+"|\S+/g) || ([] as string[]);
+    await addWisdom(message, commandPartsadd[2] ?? "");
+    return;
+  }
+
+  //Search command 1 argument [#number]
+  if (commandParts[1].startsWith("#")) {
+    await sendWisdom(message, commandParts[1] ?? "");
     return;
   }
 });
