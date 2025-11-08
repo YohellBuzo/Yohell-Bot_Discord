@@ -93,7 +93,7 @@ const addWisdom = async (message: any, paragraph: string) => {
   }
 
   try {
-    const title = `$Sabiduría #${number}`;
+    const title = `Sabiduría #${number}`;
     const cleanParagraph = paragraph.replace(/^["']|["']$/g, "").trim();
 
     if (cleanParagraph.length === 0) {
