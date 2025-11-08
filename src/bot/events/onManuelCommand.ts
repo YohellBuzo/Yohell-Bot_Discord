@@ -118,6 +118,7 @@ const addWisdom = async (message: any, paragraph: string) => {
     embed.setThumbnail(user.displayAvatarURL());
     embed.addFields([
       { name: "Autor", value: `<${user.username}>`, inline: true },
+      { name: "Título", value: `<${result.title}>`, inline: true },
     ]);
     embed.setFooter({
       text: `Sabiduría de ${user.username}`,
