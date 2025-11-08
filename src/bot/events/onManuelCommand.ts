@@ -94,6 +94,14 @@ const addWisdom = async (message: any, paragraph: string) => {
 
   try {
     const title = `$Sabiduría #${number}`;
+    const cleanParagraph = paragraph.replace(/^["']|["']$/g, "").trim();
+
+    if (cleanParagraph.length === 0) {
+      return message.reply(
+        'Leer es lava, el formarto es.\n`!manuel add "Parrafo"` las comillas no están de adorno.'
+      );
+    }
+
     const result = await insertWisdom(
       title,
       paragraph.replace(/^["']|["']$/g, ""),
