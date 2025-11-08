@@ -14,12 +14,26 @@ export async function getAllWisdoms(): Promise<Wisdom[]> {
 export async function insertWisdom(
   title: string,
   paragraph: string,
-  userid: string,
-  code: string
+  userid: string
 ): Promise<Wisdom> {
-  const query = `INSERT INTO wisdom (title, paragraph, userId, code) 
-     VALUES ($1, $2, $3, $4) RETURNING title, paragraph, userId, code`;
+  const query = `INSERT INTO wisdom (title, paragraph, userId) 
+     VALUES ($1, $2, $3) RETURNING title, paragraph, userId`;
 
-  const result = db.query(query, [title, paragraph, userid, code]);
+  const result = db.query(query, [title, paragraph, userid]);
+  return Wisdom.createFromObject((await result).rows[0]);
+}
+
+export async function getLastWisdom(): Promise<Wisdom> {
+  const query = `SELECT title FROM wisdom ORDER BY id DESC LIMIT 1`;
+
+  const result = db.query(query);
+  return Wisdom.createFromObject((await result).rows[0]);
+}
+
+export async function test(): Promise<Wisdom> {
+  const query = `ALTER TABLE wisdom
+DROP COLUMN code;`;
+
+  const result = db.query(query);
   return Wisdom.createFromObject((await result).rows[0]);
 }

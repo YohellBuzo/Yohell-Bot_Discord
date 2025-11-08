@@ -1,19 +1,23 @@
 import { EmbedBuilder, PermissionsBitField } from "discord.js";
 import { client } from "../client";
-import { getAllWisdoms, insertWisdom } from "../../services/wisdom_service";
+import {
+  getAllWisdoms,
+  getLastWisdom,
+  insertWisdom,
+} from "../../services/wisdom_service";
 import { ValidationService } from "../../utils/validation_service";
 
-const generateCode = (length: number = 3): string => {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let code = "";
+// const generateCode = (length: number = 3): string => {
+//   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+//   let code = "";
 
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * chars.length);
-    code += chars[randomIndex];
-  }
+//   for (let i = 0; i < length; i++) {
+//     const randomIndex = Math.floor(Math.random() * chars.length);
+//     code += chars[randomIndex];
+//   }
 
-  return code;
-};
+//   return code;
+// };
 
 const getRandomImage = () => {
   const width = Math.floor(Math.random() * (600 - 700 + 1)) + 600;
@@ -59,31 +63,41 @@ const sendRandomWisdom = async (message: any) => {
   }
 };
 
-const addWisdom = async (message: any, [title, paragraph]: string[]) => {
+const addWisdom = async (message: any, paragraph: string) => {
   if (message.author.bot) return;
 
-  if (
-    !title.startsWith('"') ||
-    !title.endsWith('"') ||
-    !paragraph.startsWith('"') ||
-    !paragraph.endsWith('"')
-  ) {
+  if (paragraph.length === 0) {
     return message.reply(
-      'Leer es lava, el formarto es.\n`!manuel add "Título" "Parrafo"` las comillas no están de adorno.'
+      'Leer es lava, el formarto es.\n`!manuel add "Parrafo"` las comillas no están de adorno.'
     );
   }
 
-  if (title.length > 100)
-    return message.reply("Es título no una novela (máx 100) caracteres.");
+  if (!paragraph.startsWith('"') || !paragraph.endsWith('"')) {
+    return message.reply(
+      'Leer es lava, el formarto es.\n`!manuel add "Parrafo"` las comillas no están de adorno.'
+    );
+  }
   if (paragraph.length > 500)
     return message.reply("Es párrafo no una biblia (máx 500) caracteres.");
 
+  const lastWisdom = await getLastWisdom();
+  const lastTitle = lastWisdom.title;
+  const match = lastTitle.match(/#(\d+)/);
+  let number = 1;
+  if (match) {
+    number = parseInt(match[1]) + 1;
+  } else {
+    console.warn("Error al generar el título");
+    await message.reply("Valió berenjena el guardado.");
+    return;
+  }
+
   try {
+    const title = `$Sabiduría #${number}`;
     const result = await insertWisdom(
-      title.replace(/^["']|["']$/g, ""),
+      title,
       paragraph.replace(/^["']|["']$/g, ""),
-      message.author.id,
-      `SAB-${generateCode()}`
+      message.author.id
     );
 
     const user = await client.users.fetch(result.userid);
@@ -96,7 +110,6 @@ const addWisdom = async (message: any, [title, paragraph]: string[]) => {
     embed.setThumbnail(user.displayAvatarURL());
     embed.addFields([
       { name: "Autor", value: `<${user.username}>`, inline: true },
-      { name: "Código", value: result.code, inline: true },
     ]);
     embed.setFooter({
       text: `Sabiduría de ${user.username}`,
@@ -135,9 +148,9 @@ export const onManuelCommand = client.on("messageCreate", async (message) => {
     return;
   }
 
-  //Add command 3 arguments [add, "texto", "parrafo"]
+  //Add command 2 arguments [add, "parrafo"]
   if (commandParts[1] === "add") {
-    await addWisdom(message, [commandParts[2], commandParts[3]]);
+    await addWisdom(message, commandParts[2] ?? "");
     return;
   }
 });
