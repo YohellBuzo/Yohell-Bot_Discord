@@ -179,7 +179,6 @@ const addWisdom = async (message: Message, paragraph: string) => {
       });
     }
 
-    await message.channel.send({ embeds: [embed] });
   } catch (error) {
     console.error("❌ Error al guardar sabiduría:", error);
     await message.reply("Valió berenjena el guardado.");
@@ -191,7 +190,7 @@ export const sendWisdomByUser = async (message: Message) => {
   if (message.author.bot) return;
 
   const user = message.mentions.users.first();
-  
+
   if (!user) {
     return message.reply(
       `Leer es lava, el formato es.\n!manuel get @usuario, el @ no está de adorno.`
